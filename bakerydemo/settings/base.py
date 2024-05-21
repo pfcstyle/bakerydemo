@@ -175,10 +175,10 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(PROJECT_DIR, "collect_static")
-STATIC_URL = "/static/"
+STATIC_URL = "/piek_client_static/"
 
 MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
-MEDIA_URL = "/media/"
+MEDIA_URL = "/piek_client_media/"
 
 # Override in local settings or replace with your own key. Please don't use our demo key in production!
 GOOGLE_MAP_API_KEY = "AIzaSyD31CT9P9KxvNUJOwDq2kcFEIG8ADgaFgw"

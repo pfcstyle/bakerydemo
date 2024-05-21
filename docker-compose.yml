@@ -23,11 +23,9 @@ services:
       DATABASE_URL: postgres://app_user:changeme@db/app_db
       REDIS_URL: redis://redis
       DJANGO_SETTINGS_MODULE: bakerydemo.settings.dev
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    volumes:
-      - ./bakerydemo:/code/bakerydemo
+    image: registry.cn-hangzhou.aliyuncs.com/myelin2021/piek-client:latest
+    # volumes:
+    #   - ./bakerydemo:/code/bakerydemo
     links:
       - db:db
       - redis:redis
