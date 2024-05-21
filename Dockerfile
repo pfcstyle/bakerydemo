@@ -13,11 +13,13 @@ RUN set -ex \
         postgresql-client \
         procps \
         zlib1g \
+        imagemagick \
     " \
     && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
     && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
+ENV MAGICK_HOME=/usr
 ADD requirements/ /requirements/
 ENV VIRTUAL_ENV=/venv PATH=/venv/bin:$PATH PYTHONPATH=/code/
 
@@ -38,6 +40,9 @@ RUN set -ex \
     && pip install --no-cache-dir -r /requirements/production.txt \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists/*
+
+RUN ln -s /usr/lib/libMagickCore-7.Q16HDRI.so.6 /usr/lib/libMagickCore-7.Q16HDRI.so
+RUN ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.6 /usr/lib/libMagickWand-7.Q16HDRI.so
 
 RUN mkdir /code/
 WORKDIR /code/
