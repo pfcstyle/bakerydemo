@@ -24,8 +24,8 @@ services:
       REDIS_URL: redis://redis
       DJANGO_SETTINGS_MODULE: bakerydemo.settings.dev
     image: registry.cn-hangzhou.aliyuncs.com/myelin2021/piek-client:latest
-    # volumes:
-    #   - ./bakerydemo:/code/bakerydemo
+    volumes:
+      - ./bakerydemo:/code/bakerydemo
     links:
       - db:db
       - redis:redis
