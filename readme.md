@@ -98,6 +98,7 @@ After this command completes and returns to the command prompt, wait 10 more sec
 docker compose run app /venv/bin/python manage.py migrate
 docker compose run app /venv/bin/python manage.py load_initial_data
 ```
+
 If this fails with a database error, wait 10 more seconds and re-try. Finally, run:
 
 ```bash
@@ -133,12 +134,14 @@ You can run the Wagtail demo locally without setting up Vagrant or Docker and si
 
 With [PIP](https://github.com/pypa/pip) and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/)
 installed, run:
+
 ```bash
 mkvirtualenv wagtailbakerydemo
 python --version
 ```
 
 Confirm that this is showing a compatible version of Python 3.x. If not, and you have multiple versions of Python installed on your system, you may need to specify the appropriate version when creating the virtualenv:
+
 ```bash
 deactivate
 rmvirtualenv wagtailbakerydemo
@@ -147,6 +150,7 @@ python --version
 ```
 
 Now we're ready to set up the bakery demo project itself:
+
 ```bash
 cd ~/dev [or your preferred dev directory]
 git clone https://github.com/wagtail/bakerydemo.git
@@ -156,6 +160,7 @@ pip install -r requirements/development.txt
 
 Next, we'll set up our local environment variables. We use [django-dotenv](https://github.com/jpadilla/django-dotenv)
 to help with this. It reads environment variables located in a file name `.env` in the top level directory of the project. The only variable we need to start is `DJANGO_SETTINGS_MODULE`:
+
 ```bash
 cp bakerydemo/settings/local.py.example bakerydemo/settings/local.py
 cp .env.example .env
@@ -163,6 +168,7 @@ cp .env.example .env
 ```
 
 To set up your database and load initial data, run the following commands:
+
 ```bash
 ./manage.py migrate
 ./manage.py load_initial_data
@@ -240,8 +246,8 @@ There were no updates to the demo between Wagtail 4.1 and 4.2, so the `v4.1` and
 
 The demo data includes users with different roles and preferences. You can use these users to quickly test the permission system in Wagtail or how localization is handled in the admin interface.
 
-| Username    | Password   | Superuser | Groups     | Preferred language | Timezone      | Active |
-| ----------- | ---------- | --------- | ---------- | ------------------ | ------------- | ------ |
+| Username      | Password     | Superuser | Groups     | Preferred language | Timezone      | Active |
+| ------------- | ------------ | --------- | ---------- | ------------------ | ------------- | ------ |
 | `admin`     | `changeme` | Yes       | None       | undefined          | undefined     | Yes    |
 | `editor`    | `changeme` | No        | Editors    | undefined          | undefined     | Yes    |
 | `moderator` | `changeme` | No        | Moderators | undefined          | undefined     | Yes    |

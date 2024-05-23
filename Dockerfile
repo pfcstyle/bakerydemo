@@ -1,4 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.9.19-slim-bullseye
+
+# COPY ./gosu-amd64 /usr/local/bin/gosu
+# RUN chmod +x /usr/local/bin/gosu
+# RUN gosu root
+# RUN rm /etc/apt/sources.list.d/debian.sources
+COPY sources.list /etc/apt/sources.list
 
 # Install packages needed to run your application (not build deps):
 # We need to recreate the /usr/share/man/man{1..8} directories first because
@@ -16,7 +22,8 @@ RUN set -ex \
         imagemagick \
     " \
     && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
-    && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $RUN_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
 ENV MAGICK_HOME=/usr
@@ -36,8 +43,11 @@ RUN set -ex \
     " \
     && apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS \
     && python3.9 -m venv ${VIRTUAL_ENV} \
-    && pip install -U pip \
-    && pip install --no-cache-dir -r /requirements/production.txt \
+    && pip install -U pip -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+
+RUN set -ex \
+    && python -V \
+    && pip install --no-cache-dir -r /requirements/production.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
@@ -47,6 +57,7 @@ RUN ln -s /usr/lib/libMagickWand-7.Q16HDRI.so.6 /usr/lib/libMagickWand-7.Q16HDRI
 RUN mkdir /code/
 WORKDIR /code/
 ADD . /code/
+RUN chmod +x /code/docker-entrypoint.sh
 ENV PORT 8000
 EXPOSE 8000
 
