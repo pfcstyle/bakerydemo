@@ -206,6 +206,8 @@ WAGTAILIMAGES_AVIF_QUALITY = 60
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "changeme")
 
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", ['https://piek.top', 'https://*.piek.top'])
+
 # Content Security policy settings
 # http://django-csp.readthedocs.io/en/latest/configuration.html
 
