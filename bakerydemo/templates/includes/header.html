@@ -118,7 +118,7 @@
 
         sendCodeButton.addEventListener('click', function() {
             const phoneNumber = document.getElementById('phone').value;
-            fetch(`http://47.118.47.228:9010/api/v1/users/send_auth_code?phone_number=${phoneNumber}`)
+            fetch(`https://piek.top/api/v1/users/send_auth_code?phone_number=${phoneNumber}`)
                 .then(response => {
                     if (response.ok) {
                         alert('验证码已发送');
@@ -153,9 +153,9 @@
             event.preventDefault();
             const phoneNumber = document.getElementById('phone').value;
             const authCode = document.getElementById('code').value;
-            const clientId = 'Gl6fnZ3eyp0DVYNsSbSMXl2OPmZJp027FgSQ5rvY';  // 替换为你的client_id
+            const clientId = 'Gl6fnZ3eyp0DVYNsSbSMXl2OPmZJp027FgsQ5rvY';  // 替换为你的client_id
 
-            fetch('http://piek.top/api/v1/users/login/auth_code', {
+            fetch('https://piek.top/api/v1/users/login/auth_code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
