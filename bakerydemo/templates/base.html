@@ -15,6 +15,7 @@
                 | {{ settings.base.SiteSettings.title_suffix }}
             {% endblock %}
         </title>
+        <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
         <meta name="description" content="{% block search_description %}{% if page.search_description %}{{ page.search_description }}{% endif %}{% endblock %}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
