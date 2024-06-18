@@ -2,6 +2,8 @@
 {% load static %}
 
 <header class="header clearfix">
+    <script src="{% static 'js/jquery-1.9.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <div class="container">
         <div class="navigation" data-navigation>
             <a href="/" class="navigation__logo">The Wagtail Bakery</a>
@@ -55,13 +57,17 @@
                     </div>
                 </form>
     
-                <div class="navigation__user-info ml-2">
+                <div class="navigation__user-info ml-2 dropdown">
                     <!-- 添加登录按钮 -->
-                   <button id="login-button" class="btn btn-success">登录</button>
-                   <div id="user-info" class="d-none align-items-center">
-                       <img id="user-portrait" class="img-circle" src="{% static 'img/thumbnail.png' %}" width="40" height="40">
-                       <span id="user-nickname"></span>
-                   </div>
+                    <button id="login-button" class="btn btn-success" data-toggle="modal" data-target="#login-modal">登录</button>
+                    <div id="user-info" class="user-info d-none align-items-center dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
+                        <img id="user-portrait" class="img-circle" src="{% static 'img/thumbnail.png' %}" width="40" height="40">
+                        <span id="user-nickname"></span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-right" id="user-dropdown-menu" style="background-color: white;padding: 0;">
+                        <!-- <li><a href="#" id="user-details">用户信息</a></li> -->
+                        <li><a href="#" id="logout">登出</a></li>
+                    </ul>
                 </div>
             </div>
             
@@ -69,35 +75,61 @@
         
     </div>
 </header>
+
 <!-- 登录对话框 -->
-<div id="login-modal" class="modal-content, modal">
-    <div class="modal-header">
-        <h5 class="modal-title">登录</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form id="login-form">
-            <div class="form-group">
-                <label for="phone">手机号:</label>
-                <input type="text" class="form-control" id="phone" name="phone" required>
-            </div>
-            <div class="form-group">
-                <button type="button" id="send-code-button" class="btn btn-primary align-items-center">
-                    <span class="loading-spinner hidden"></span>发送验证码
+<div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title text-center">
+                    <img src="{% static 'img/thumbnail.png' %}" alt="Logo" class="center-block" style="height: 50px;width: 50px;">
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="form-group">
-                <label for="code">验证码:</label>
-                <input type="text" class="form-control" id="code" name="code" required>
+            <div class="modal-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="phone" class="control-label">手机号:</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入手机号" required>
+                        <div id="phone-error" class="text-danger" style="display:none;">手机号码格式不正确，请重新输入</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="code" class="control-label">验证码:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="code" name="code" placeholder="请输入验证码" required>
+                            <span class="input-group-btn">
+                                <button type="button" id="send-code-button" class="btn btn-default align-items-center">                    
+                                    <span class="loading-spinner invisible"></span>
+                                    获取验证码
+                                </button>
+                            </span>
+                        </div>
+                        <div id="code-sent-message" class="help-block text-success" style="display:none;font-size: 10px;">短信验证码已发送，可能会有延迟，请耐心等待</div>
+                        <div id="code-error" class="text-danger" style="display:none;">验证码错误</div>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="terms-checkbox" required> 我已阅读并同意 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a>
+                            </label>
+                        </div>
+                        <div id="terms-error" class="text-danger" style="display:none;">请阅读并同意用户协议和隐私政策</div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="loading-spinner invisible"></span>
+                            登录
+                        </button>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-success align-items-center">
-                <span class="loading-spinner hidden"></span>登录
-            </button>
-        </form>
+        </div>
     </div>
 </div>
+
+
 
 <style>
     .flex-container {
@@ -115,26 +147,89 @@
         margin-left: 1rem;
     }
 
-    .modal {
-        display: none; /* 隐藏 */
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+    .modal-content {
+        border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     }
 
-    .modal.active {
-        display: block; /* 显示 */
+    .modal-header {
+        border-bottom: none;
+        position: relative;
     }
 
-    .disabled-button {
-        background-color: #ccc;
-        cursor: not-allowed;
+    .modal-header .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 24px;
     }
+
+    .modal-body {
+        padding: 20px 40px;
+    }
+
+    .input-group .form-control {
+        border-right: 0;
+    }
+
+    .input-group-btn .btn {
+        border-left: 0;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    .input-group-btn .btn:disabled {
+        background-color: #ddd;
+        color: #999;
+    }
+
+    #login-modal .form-group {
+        margin-bottom: 20px;
+    }
+
+    #login-modal .btn-primary {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+    #login-modal .btn-primary:hover {
+        background-color: #4cae4c;
+        border-color: #4cae4c;
+    }
+
+    #login-modal .checkbox label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    #login-modal .checkbox a {
+        color: #337ab7;
+    }
+
+    #login-modal .checkbox a:hover {
+        color: #23527c;
+        text-decoration: underline;
+    }
+
+    #login-modal .help-block {
+        margin-top: 10px;
+    }
+
+    .text-danger {
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
 
     .user-info {
         display: flex;
@@ -152,14 +247,14 @@
         display: none;
     }
 
-    .hidden {
-        display: none;
+    #send-code-button {
+        min-width: 120px; /* 根据按钮的最大文本长度设置适当的宽度 */
     }
 
     .loading-spinner {
         display: inline-block;
-        width: 20px;
-        height: 20px;
+        width: 12px;
+        height: 12px;
         border: 2px solid rgba(0, 0, 0, .1);
         border-radius: 50%;
         border-top-color: #007bff;
@@ -175,14 +270,21 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // 登录按钮
         const loginButton = document.getElementById('login-button');
-        const loginModal = document.getElementById('login-modal');
-        const closeModalButtons = document.querySelectorAll('.close');
+        // 登录弹框
+        const closeModalButton = document.querySelector('#login-modal .close');
         const sendCodeButton = document.getElementById('send-code-button');
         const sendCodeSpinner = sendCodeButton.querySelector('.loading-spinner');
-        const loginForm = document.getElementById('login-form');
-        const loginFormButton = loginForm.querySelector('button[type="submit"]');
+        const codeSentMessage = document.getElementById('code-sent-message');
+        const phoneError = document.getElementById('phone-error');
+        const codeError = document.getElementById('code-error');
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        const termsError = document.getElementById('terms-error');
+        const loginFormButton = document.getElementById('login-modal').querySelector('button[type="submit"]');
         const loginFormSpinner = loginFormButton.querySelector('.loading-spinner');
+        
+        // 用户信息
         const userInfo = document.getElementById('user-info');
         const userPortrait = document.getElementById('user-portrait');
         const userNickname = document.getElementById('user-nickname');
@@ -198,21 +300,16 @@
             userInfo.classList.add('d-none');
         }
 
-        loginButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            loginModal.classList.add('active');
-        });
-
-        closeModalButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                loginModal.classList.remove('active');
-            });
-        });
-
         sendCodeButton.addEventListener('click', function() {
-            sendCodeButton.disabled = true;
             const phoneNumber = document.getElementById('phone').value;
-            sendCodeSpinner.classList.remove('hidden');
+            if (!validatePhoneNumber(phoneNumber)) {
+                phoneError.style.display = 'block';
+                return;
+            }
+            phoneError.style.display = 'none';
+            sendCodeButton.disabled = true;
+            sendCodeSpinner.classList.remove('invisible');
+            codeSentMessage.style.display = 'none';
             fetch(`https://piek.top/api/v1/users/send_auth_code?phone_number=${phoneNumber}`)
                 .then(response => {
                     if (!response.ok) {
@@ -222,9 +319,9 @@
                 })
                 .then(data => {
                     sendCodeButton.disabled = false;
-                    sendCodeSpinner.classList.add('hidden');
+                    sendCodeSpinner.classList.add('invisible');
                     if (data.code === 1000 && data.msg === "success") {
-                        alert('验证码已发送');
+                        codeSentMessage.style.display = 'block';
                         startCountdown(sendCodeButton, 60);
                     } else {
                         alert('发送验证码失败');
@@ -232,38 +329,51 @@
                 })
                 .catch(() => {
                     sendCodeButton.disabled = false;
-                    sendCodeSpinner.classList.add('hidden');
                     alert('发送验证码失败');
                 });
         });
 
+        function validatePhoneNumber(phone) {
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
         function startCountdown(button, seconds) {
-            button.disabled = true;
-            button.classList.add('disabled-button');
             let remaining = seconds;
-            button.textContent = `${remaining}s`;
+            button.textContent = `${remaining}秒后重发`;
 
             const countdownInterval = setInterval(() => {
                 remaining -= 1;
-                button.textContent = `${remaining}s`;
+                button.textContent = `${remaining}秒后重发`;
 
                 if (remaining <= 0) {
                     clearInterval(countdownInterval);
                     button.disabled = false;
-                    button.classList.remove('disabled-button');
-                    button.textContent = '发送验证码';
+                    button.textContent = '获取验证码';
                 }
             }, 1000);
         }
 
-        loginForm.addEventListener('submit', function(event) {
+        $('#login-form').on('submit', function(event) {
             event.preventDefault();
             loginFormButton.disabled = true;
-            loginFormSpinner.classList.remove('hidden');
-            const phoneNumber = document.getElementById('phone').value;
-            const authCode = document.getElementById('code').value;
+            const phoneNumber = $('#phone').val();
+            const authCode = $('#code').val();
             const clientId = 'Gl6fnZ3eyp0DVYNsSbSMXl2OPmZJp027FgsQ5rvY';  // 替换为你的client_id
+            const termsAccepted = termsCheckbox.checked;
+            
+            if (!termsAccepted) {
+                termsError.style.display = 'block';
+                return;
+            }
+            termsError.style.display = 'none';
 
+            if (!validatePhoneNumber(phoneNumber)) {
+                phoneError.style.display = 'block';
+                return;
+            }
+            phoneError.style.display = 'none';
+            loginFormSpinner.classList.remove('invisible');
             fetch('https://piek.top/api/v1/users/login/auth_code', {
                 method: 'POST',
                 headers: {
@@ -280,30 +390,49 @@
                     throw new Error('登录失败');
                 }
                 return response.json();
-            })
-            .then(data => {
+            }).then(data => {
                 loginFormButton.disabled = false;
-                loginFormSpinner.classList.add('hidden');
+                loginFormSpinner.classList.add('invisible');
+                console.log(data)
                 if (data.code === 1000 && data.msg === "success") {
+                    closeModalButton.click();
                     const user = data.data.user;
                     showUserInfo(user);
                     setCookie('user_info', JSON.stringify(user), 7);  // 保存用户信息到Cookie，7天有效
-                    loginModal.classList.remove('active');
                 } else {
-                    alert('登录失败: ' + data.msg);
+                    codeError.style.display = 'block';
                 }
-            })
-            .catch(() => {
+            }).catch((e) => {
+                console.error(e);
                 loginFormButton.disabled = false;
-                loginFormSpinner.classList.add('hidden');
-                alert('登录失败');
+                loginFormSpinner.classList.add('invisible');
+                codeError.style.display = 'block';
             });
         });
 
+        $('#logout').on('click', function() {
+            setCookie('user_info', '', -1);  // 清除用户信息的Cookie
+            loginButton.style.display = 'block';
+            userInfo.classList.add('d-none');
+        });
+
+        // $('#user-details').on('click', function() {
+        //     alert('用户信息: ' + JSON.stringify({
+        //         nickname: userNickname.textContent,
+        //         portrait: userPortrait.src
+        //     }));
+        // });
+
+        // 点击空白处隐藏下拉菜单
+        // $(document).on('click', function(event) {
+        //     if (!$(event.target).closest('.navigation__user-info').length) {
+        //         $('.dropdown-toggle').dropdown('hide');
+        //     }
+        // });
+
         function showUserInfo(user) {
             loginButton.style.display = 'none';
-            userInfo.classList.remove('d-none');  // 修改为移除 d-none 类
-            userInfo.style.display = 'flex';  // 显示用户信息
+            userInfo.classList.remove('d-none');
             userPortrait.src = user.portrait || "{% static 'img/thumbnail.png' %}";
             userNickname.textContent = user.nickname;
         }
