@@ -827,7 +827,12 @@ footer {
     max-width: 1600px;
     padding-left: 40px;
     padding-right: 40px;
+    /* height: 400px; */
   }
+}
+
+.homepage .container {
+  height: 400px;
 }
 
 .container-narrow > hr {
@@ -1523,6 +1528,11 @@ input[type='radio'] {
   padding: 0;
 }
 
+.homepage .app-screen {
+  margin-top: -220px;
+  margin-left: 300px;
+}
+
 .homepage .promo figure img {
   margin: 40px 0 -200px;
   width: 100%;
@@ -1531,7 +1541,7 @@ input[type='radio'] {
 
 @media (min-width: 768px) {
   .homepage .promo {
-    margin-top: -180px;
+    margin-top: -120px;
     margin-right: -120px;
     padding: 180px 60px 40px;
   }
