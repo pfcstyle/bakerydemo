@@ -25,10 +25,11 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="row promo-row">
+        <div class="container phone">
+            <!-- <div class="background-div" style="height: 50%; background-color: black; position: absolute; width: 100%; z-index: 1;"></div> -->
+            <div class="row promo-row", style="z-index: 2;position: relative;">
                 <div class="col-sm-6">
-                    <img class="app-screen" src="{% static 'img/appscreen.png' %}" style="width: 412px;height: 826px;">
+                    <img class="app-screen" src="{% static 'img/appscreen.png' %}" style="width: 412px;">
                     <!-- {% if page.featured_section_1 %}
                         <h2 class="featured-cards__title">{{ page.featured_section_1_title }}</h2>
                         <ul class="featured-cards__list">
@@ -45,7 +46,7 @@
                     {% endif %} -->
                 </div>
 
-                <div class="col-sm-5 promo">
+                <div class="col-sm-5 promo", style="z-index: 2;position: relative;">
                     {% if page.promo_image or page.promo_title or page.promo_text %}
                         <div class="col-lg-10 promo-text">
                             {% if page.promo_title %}
